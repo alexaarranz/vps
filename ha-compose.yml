@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+
+  mqtt-broker:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"  # Still public for incoming MQTT from internet/devices
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - ha-net
+    restart: unless-stopped
+
+  ha1:
+    image: homeassistant/home-assistant:stable
+    container_name: ha1
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ha1.rule=Host(`ha1.yourdomain.com`)
+      - traefik.http.routers.ha1.entrypoints=websecure
+      - traefik.http.routers.ha1.tls.certresolver=myresolver
+      - traefik.http.services.ha1.loadbalancer.server.port=8123
+    volumes:
+      - ./ha1-config:/config
+    environment:
+      - TZ=Europe/Berlin
+    networks:
+      - ha-net
+    restart: unless-stopped
+
+  ha2:
+    image: homeassistant/home-assistant:stable
+    container_name: ha2
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ha2.rule=Host(`ha2.yourdomain.com`)
+      - traefik.http.routers.ha2.entrypoints=websecure
+      - traefik.http.routers.ha2.tls.certresolver=myresolver
+      - traefik.http.services.ha2.loadbalancer.server.port=8123
+    volumes:
+      - ./ha2-config:/config
+    environment:
+      - TZ=Europe/Berlin
+    networks:
+      - ha-net
+    restart: unless-stopped
+    

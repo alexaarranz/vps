@@ -1,0 +1,31 @@
+# Sensitive environment & secrets files - never commit real values
+.env
+.env.*
+.envrc
+.env.local
+.env.development
+.env.production
+.env.bak
+*.env
+
+.secret
+*.secret
+
+# Ignore entire folders if they contain real secrets
+# env/
+# secrets/
+
+# Other common secrets & credentials
+*.key
+*.pem
+*.crt
+*.cer
+*.password
+credentials.json
+config/secrets.yml
+docker-compose.override.yml  # sometimes used for local secrets
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log

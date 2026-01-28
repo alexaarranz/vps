@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+
+  pangolin:
+    image: pangolin:latest
+    container_name: pangolin
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pangolin.rule=Host(`pangolin.mywwlhome.uk`)
+      - traefik.http.routers.pangolin.entrypoints=websecure
+      - traefik.http.routers.pangolin.tls.certresolver=myresolver
+      - traefik.http.services.pangolin.loadbalancer.server.port=80  # Adjust if different
+    networks:
+      - pangolin-net
+    restart: unless-stopped
+
+  gerbil:
+    image: your-gerbil-image:latest
+    container_name: gerbil
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gerbil.rule=Host(`gerbil.yourdomain.com`)
+      - traefik.http.routers.gerbil.entrypoints=websecure
+      - traefik.http.routers.gerbil.tls.certresolver=myresolver
+      - traefik.http.services.gerbil.loadbalancer.server.port=80
+    networks:
+      - pangolin-net
+    restart: unless-stopped
