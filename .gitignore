@@ -1,6 +1,5 @@
 # Sensitive environment & secrets files - never commit real values
 .env
-.env.*
 .envrc
 .env.local
 .env.development
