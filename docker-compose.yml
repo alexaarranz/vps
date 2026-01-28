@@ -1,5 +1,3 @@
-version: '3.8'
-
 secrets:
   cloudflare-token:
     file: ./secrets/cloudflare-token.secret
