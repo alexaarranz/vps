@@ -66,7 +66,7 @@ services:
     env_file:
       - /opt/docker/vps-stack/env/traefik.env
     secrets:
-      - traefik_auth  
+      - traefik_auth
     # ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
     # - "80:80"
     # - "443:443"
