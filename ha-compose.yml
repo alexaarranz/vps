@@ -29,7 +29,7 @@ services:
       - traefik.http.routers.ha1.tls.certresolver=letsencrypt
       - traefik.http.services.ha1.loadbalancer.server.port=8123
     volumes:
-      - /opt/docker/vps-stack/ha1-config:/config 
+      - /opt/docker/vps-stack/homeassistant/ha1-config:/config 
     environment:
       - TZ=${TZ}
     networks:
@@ -48,7 +48,7 @@ services:
       - traefik.http.routers.ha2.tls.certresolver=letsencrypt
       - traefik.http.services.ha2.loadbalancer.server.port=8123
     volumes:
-      - /opt/docker/vps-stack/ha2-config:/config 
+      - /opt/docker/vps-stack/homeassistant/ha2-config:/config 
     environment:
       - TZ=${TZ}
     networks:
