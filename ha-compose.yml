@@ -1,18 +1,17 @@
-version: '3.8'
-
 services:
-
   mqtt-broker:
     image: eclipse-mosquitto:latest
     container_name: mqtt-broker
     ports:
-      - "1883:1883"  # Still public for incoming MQTT from internet/devices
+      - "1883:1883"   # plain MQTT (keep only if you really need public unauthenticated access)
+      - "8883:8883"   # TLS MQTT (recommended for any external/secure usage)
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
     networks:
-      - ha-net
+      ha-net:
+        ipv4_address: 192.168.0.11
     restart: unless-stopped
 
   ha1:
@@ -20,16 +19,18 @@ services:
     container_name: ha1
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ha1.rule=Host(`ha1.yourdomain.com`)
+      - traefik.http.routers.ha1.rule=Host(`${HA1_URL}`)
       - traefik.http.routers.ha1.entrypoints=websecure
-      - traefik.http.routers.ha1.tls.certresolver=myresolver
+      - traefik.http.routers.ha1.tls=true
+      - traefik.http.routers.ha1.tls.certresolver=letsencrypt
       - traefik.http.services.ha1.loadbalancer.server.port=8123
     volumes:
-      - ./ha1-config:/config
+      - /opt/docker/vps-stack/ha1-config:/config 
     environment:
-      - TZ=Europe/Berlin
+      - TZ=${TZ}
     networks:
-      - ha-net
+      ha-net:
+        ipv4_address: 192.168.0.101
     restart: unless-stopped
 
   ha2:
@@ -37,15 +38,16 @@ services:
     container_name: ha2
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ha2.rule=Host(`ha2.yourdomain.com`)
+      - traefik.http.routers.ha2.rule=Host(`${HA2_URL}`)
       - traefik.http.routers.ha2.entrypoints=websecure
-      - traefik.http.routers.ha2.tls.certresolver=myresolver
+      - traefik.http.routers.ha2.tls=true
+      - traefik.http.routers.ha2.tls.certresolver=letsencrypt
       - traefik.http.services.ha2.loadbalancer.server.port=8123
     volumes:
-      - ./ha2-config:/config
+      - /opt/docker/vps-stack/ha2-config:/config 
     environment:
-      - TZ=Europe/Berlin
+      - TZ=${TZ}
     networks:
-      - ha-net
+      ha-net:
+        ipv4_address: 192.168.0.102
     restart: unless-stopped
-    
