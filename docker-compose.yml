@@ -50,9 +50,9 @@ services:
     env_file:
       - /opt/docker/vps-stack/env/traefik.env
     ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
-     - "80:80"
-     - "443:443"
-     - "8080:8080"  # Optional Traefik dashboard
+    # - "80:80"
+    #- "443:443"
+    # - "8080:8080"  # Optional Traefik dashboard
     networks:
       wan-net:
         ipv4_address: 192.0.2.3
