@@ -49,9 +49,9 @@ services:
       - traefik.http.routers.traefik.middlewares=auth       # optional: add basic auth or forward-auth
     env_file:
       - /opt/docker/vps-stack/env/traefik.env
-    ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
+    # ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
     # - "80:80"
-    #- "443:443"
+    # - "443:443"
     # - "8080:8080"  # Optional Traefik dashboard
     networks:
       wan-net:
