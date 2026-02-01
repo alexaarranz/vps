@@ -1,6 +1,9 @@
 secrets:
   traefik_auth:
     file: /opt/docker/vps-stack/secrets/traefik.secret   # Contains credentials for Traefik's dashboard
+  wireguard:
+    file: /opt/docker/vps-stack/secrets/wireguard.secret   # Wireguard configuration file
+
 services:
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -14,6 +17,12 @@ services:
     restart: unless-stopped
     depends_on:
       - traefik
+    healthcheck:
+      test: ["CMD", "cloudflared", "tunnel", "ready", "--metrics", "127.0.0.1:2000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s     # Give time for initial connection/handshake
 
   traefik:
     image: traefik:v3.6.7
@@ -81,6 +90,31 @@ services:
       interval: 10s
       timeout: 3s
       start_period: 60s
+
+gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+    secrets:
+      - source: wireguard
+        target: /gluetun/wireguard/wg0.conf
+        mode: 0400
+    networks:
+      vpn-net:
+        ipv4_address: 192.0.2.11
+    restart: unless-stopped
+    healthcheck:
+      test: ["/gluetun-entrypoint", "healthcheck"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 1
 
 include:
 #  - lab-compose.yml
