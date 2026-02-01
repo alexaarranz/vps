@@ -19,7 +19,7 @@ services:
      # - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     networks:
       wan-net:
-        ipv4_address: 192.0.2.2
+        ipv4_address: 192.0.2.2 
     restart: unless-stopped
     depends_on:
       - traefik
@@ -38,8 +38,8 @@ services:
       # Set up LetsEncrypt certificate resolver
       - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
-      - --certificatesResolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesResolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=20
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=20
       - --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       # Set up an insecure listener that redirects all traffic to TLS
@@ -50,13 +50,13 @@ services:
       # Set up the TLS configuration for our websecure listener
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN} 
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].main=*.${DOMAIN} 
+      - --entrypoints.websecure.http.tls.domains[0].sans=${DOMAIN}
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel
       - traefik.enable=true
-      - traefik.http.routers.traefik.rule=Host(`traefik.mywwlhome.uk`)
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DOMAIN}`)
       - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.tls.certresolver=1.1.1.1:53,1.0.0.1:53
+      - traefik.http.routers.traefik.tls.certresolver=letsencrypt
       - traefik.http.routers.traefik.service=api@internal   # points to built-in dashboard
       - traefik.http.routers.traefik.middlewares=auth       # optional: add basic auth or forward-auth
     # secrets:    (if using Docker secrets instead of env)
@@ -64,7 +64,7 @@ services:
       # - cloudflare-email
     env_file:
       - ./env/common.env
-      - ./env/traefik.env
+      - /opt/docker/vps-stack/env/traefik.env
     ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
      - "80:80"
      - "443:443"
@@ -73,7 +73,7 @@ services:
       wan-net:
         ipv4_address: 192.0.2.3
       vpn-net:
-        ipv4_adress: 192.0.2.10
+        ipv4_address: 192.0.2.10
       ha-net:
         ipv4_address: 192.168.0.2
       lab-net:
