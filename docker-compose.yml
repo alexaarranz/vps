@@ -7,11 +7,11 @@ services:
       - /opt/docker/vps-stack/env/cloudflare.env
     networks:
       wan-net:
-        ipv4_address: 192.0.2.2 
+        ipv4_address: 192.0.2.2
     restart: unless-stopped
     depends_on:
       - traefik
-  
+
   traefik:
     image: traefik:v3.6.7
     container_name: traefik
@@ -38,7 +38,7 @@ services:
       # Set up the TLS configuration for our websecure listener
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=*.${DOMAIN} 
+      - --entrypoints.websecure.http.tls.domains[0].main=*.${DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${DOMAIN}
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel
       - traefik.enable=true
