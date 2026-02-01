@@ -18,6 +18,7 @@
 *.pem
 *.crt
 *.cer
+*.md
 *.password
 credentials.json
 config/secrets.yml
