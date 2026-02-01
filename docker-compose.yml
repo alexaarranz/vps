@@ -42,7 +42,8 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=${DOMAIN}
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel
       - traefik.enable=true
-      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DOMAIN}`)
+      # - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
       - traefik.http.routers.traefik.entrypoints=websecure
       - traefik.http.routers.traefik.tls.certresolver=letsencrypt
       - traefik.http.routers.traefik.service=api@internal   # points to built-in dashboard
