@@ -110,7 +110,7 @@ services:
         ipv4_address: 192.0.2.11
     restart: unless-stopped
     healthcheck:
-      test: ["/gluetun-entrypoint", "healthcheck"]
+      test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
       interval: 5s
       timeout: 5s
       start_period: 10s
