@@ -7,8 +7,7 @@ services:
     - traefik.http.routers.mqtt.entrypoints=websecure
     - traefik.http.routers.mqtt.tls.certresolver=letsencrypt
     ports:
-      - "1883:1883"   # plain MQTT (keep only if you really need public unauthenticated access)
-      - "8883:8883"   # TLS MQTT (recommended for any external/secure usage)
+      - "8883:8883"   # TLS MQTT (recommended for secure usage, use "1883:1883" for plain MQTT)
     volumes: 
       - /opt/docker/vps-stack/mosquitto/config:/mosquitto/config
       - /opt/docker/vps-stack/mosquitto/data:/mosquitto/data
