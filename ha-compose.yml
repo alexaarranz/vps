@@ -2,10 +2,10 @@ services:
   mqtt-broker:
     image: eclipse-mosquitto:latest
     container_name: mqtt-broker
-    labels:
-    - traefik.http.routers.mqtt.rule=Host(`${MQTT_URL}`)
-    - traefik.http.routers.mqtt.entrypoints=websecure
-    - traefik.http.routers.mqtt.tls.certresolver=letsencrypt
+    # labels:  # Use the traefik labels only if MQTT comes from traefik; otherwise comment out
+    # - traefik.http.routers.mqtt.rule=Host(`${MQTT_URL}`)
+    # - traefik.http.routers.mqtt.entrypoints=websecure
+    # - traefik.http.routers.mqtt.tls.certresolver=letsencrypt
     ports:
       - "8883:8883"   # TLS MQTT (recommended for secure usage, use "1883:1883" for plain MQTT)
     volumes: 

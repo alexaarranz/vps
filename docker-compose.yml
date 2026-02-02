@@ -35,13 +35,13 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false  # Only label-enabled containers
       - --serversTransport.insecureSkipVerify=true
-      # Set up LetsEncrypt certificate resolver (Cloudflare DNS-01 challenger)
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.propagation.delayBeforeChecks=300  # Wait for DNS propagation (Cloudflare can be slow)
-      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # Use the "certificatesresolvers" lines if set up LetsEncrypt certificate resolver (Cloudflare DNS-01 challenger). No cert required since Cloudflare secures the traffic
+      # --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      # --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+      # --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      # --certificatesresolvers.letsencrypt.acme.dnschallenge.propagation.delayBeforeChecks=300  # Wait for DNS propagation (Cloudflare can be slow)
+      # --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
+      # --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       # Set up an insecure listener that redirects all traffic to TLS
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
