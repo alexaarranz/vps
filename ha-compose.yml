@@ -24,8 +24,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.ha1.rule=Host(`${HA1_URL}`)
-      # - traefik.http.routers.ha1.entrypoints=websecure
-      # - traefik.http.routers.ha1.tls=true
+      - traefik.http.routers.ha1.entrypoints=websecure
       - traefik.http.routers.ha1.tls.certresolver=letsencrypt
       - traefik.http.services.ha1.loadbalancer.server.port=8123
     volumes:
@@ -44,7 +43,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.ha2.rule=Host(`${HA2_URL}`)
       - traefik.http.routers.ha2.entrypoints=websecure
-      - traefik.http.routers.ha2.tls=true
       - traefik.http.routers.ha2.tls.certresolver=letsencrypt
       - traefik.http.services.ha2.loadbalancer.server.port=8123
     volumes:

@@ -30,7 +30,7 @@ services:
     restart: always
     command:
       - --log.level=DEBUG
-      - --api.insecure=true                  # Dashboard on :8080; disable in prod or secure it
+      - --api.insecure=false                  # API not exposed on the entry point traefik (Dashboard, port 8080)
       - --api.dashboard=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false  # Only label-enabled containers
