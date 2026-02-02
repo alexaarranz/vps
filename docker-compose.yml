@@ -69,6 +69,11 @@ services:
     # - "80:80"
     # - "443:443"
     # - "8080:8080"  # Optional Traefik dashboard
+
+    volumes:
+      - /run/docker.sock:/var/run/docker.sock:ro    # So that Traefik can listen to the Docker events
+      - /opt/docker/vps-stack/letsencrypt:/letsencrypt  # Let's Encrypt certificates storage
+
     networks:
       wan-net:
         ipv4_address: 192.0.2.3
@@ -78,10 +83,6 @@ services:
         ipv4_address: 192.168.0.2
       lab-net:
         ipv4_address: 192.168.1.2
-
-    volumes:
-      - /run/docker.sock:/var/run/docker.sock:ro    # SO that Traefik can listen to the Docker events
-      - /opt/docker/vps-stack/letsencrypt:/letsencrypt  # Let's Encrypt certificates storage
 
     healthcheck:
       test: netstat -ptan | grep -E "443.*LISTEN" || exit 1

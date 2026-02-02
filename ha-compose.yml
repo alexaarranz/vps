@@ -23,12 +23,12 @@ services:
     container_name: ha01
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ha1.rule=Host(`${HA01_URL}`)
-      - traefik.http.routers.ha1.entrypoints=websecure
-      - traefik.http.routers.ha1.tls.certresolver=letsencrypt
-      - traefik.http.services.ha1.loadbalancer.server.port=8123
+      - traefik.http.routers.ha01.rule=Host(`${HA01_URL}`)
+      - traefik.http.routers.ha01.entrypoints=websecure
+      - traefik.http.routers.ha01.tls.certresolver=letsencrypt
+      - traefik.http.services.ha01.loadbalancer.server.port=8123
     volumes:
-      - /opt/docker/vps-stack/homeassistant/ha1-config:/config 
+      - /opt/docker/vps-stack/homeassistant/ha01-config:/config 
     environment:
       - TZ=${TZ}
     networks:
@@ -41,12 +41,12 @@ services:
     container_name: ha02
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ha2.rule=Host(`${HA02_URL}`)
-      - traefik.http.routers.ha2.entrypoints=websecure
-      - traefik.http.routers.ha2.tls.certresolver=letsencrypt
-      - traefik.http.services.ha2.loadbalancer.server.port=8123
+      - traefik.http.routers.ha02.rule=Host(`${HA02_URL}`)
+      - traefik.http.routers.ha02.entrypoints=websecure
+      - traefik.http.routers.ha02.tls.certresolver=letsencrypt
+      - traefik.http.services.ha02.loadbalancer.server.port=8123
     volumes:
-      - /opt/docker/vps-stack/homeassistant/ha2-config:/config 
+      - /opt/docker/vps-stack/homeassistant/ha02-config:/config 
     environment:
       - TZ=${TZ}
     networks:
