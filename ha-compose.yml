@@ -3,7 +3,7 @@ services:
     image: eclipse-mosquitto:latest
     container_name: mqtt-broker
     labels:
-    - traefik.http.routers.mqtt.rule=Host(`mqtt.mywwlhome.uk`)
+    - traefik.http.routers.mqtt.rule=Host(`${MQTT_URL}`)
     - traefik.http.routers.mqtt.entrypoints=websecure
     - traefik.http.routers.mqtt.tls.certresolver=letsencrypt
     ports:
@@ -18,12 +18,12 @@ services:
         ipv4_address: 192.168.0.11
     restart: unless-stopped
 
-  ha1:
+  ha01:
     image: homeassistant/home-assistant:stable
-    container_name: ha1
+    container_name: ha01
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ha1.rule=Host(`${HA1_URL}`)
+      - traefik.http.routers.ha1.rule=Host(`${HA01_URL}`)
       - traefik.http.routers.ha1.entrypoints=websecure
       - traefik.http.routers.ha1.tls.certresolver=letsencrypt
       - traefik.http.services.ha1.loadbalancer.server.port=8123
@@ -36,12 +36,12 @@ services:
         ipv4_address: 192.168.0.101
     restart: unless-stopped
 
-  ha2:
+  ha02:
     image: homeassistant/home-assistant:stable
-    container_name: ha2
+    container_name: ha02
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ha2.rule=Host(`${HA2_URL}`)
+      - traefik.http.routers.ha2.rule=Host(`${HA02_URL}`)
       - traefik.http.routers.ha2.entrypoints=websecure
       - traefik.http.routers.ha2.tls.certresolver=letsencrypt
       - traefik.http.services.ha2.loadbalancer.server.port=8123

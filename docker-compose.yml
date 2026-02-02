@@ -35,11 +35,11 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false  # Only label-enabled containers
       - --serversTransport.insecureSkipVerify=true
-      # Set up LetsEncrypt certificate resolver
+      # Set up LetsEncrypt certificate resolver (Cloudflare DNS-01 challenger)
       - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=20
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=300  # Wait for DNS propagation (Cloudflare can be slow)
       - --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       # Set up an insecure listener that redirects all traffic to TLS
@@ -47,14 +47,14 @@ services:
       - --entrypoints.websecure.address=:443
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      # Set up the TLS configuration for our websecure listener
+      # Set up the TLS configuration for traefik's websecure listener
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=*.${DOMAIN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=${DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].main=*.${VPS_DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel
       - traefik.enable=true
-      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_URL}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
       - traefik.http.routers.traefik.entrypoints=websecure
       - traefik.http.routers.traefik.tls.certresolver=letsencrypt
       - traefik.http.routers.traefik.service=api@internal   # points to built-in dashboard
