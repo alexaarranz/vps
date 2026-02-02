@@ -59,9 +59,8 @@ services:
       - traefik.http.routers.traefik.tls.certresolver=letsencrypt
       - traefik.http.routers.traefik.service=api@internal   # points to built-in dashboard
       - traefik.http.routers.traefik.middlewares=auth       # optional: add basic auth or forward-auth
-      # Basic auth middleware definition
-      - traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/traefik_auth
-      - traefik.http.middlewares.auth.basicauth.realm=Traefik Dashboard
+      - traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/traefik_auth   # Basic auth middleware definition
+      - traefik.http.middlewares.auth.basicauth.realm=Traefik Dashboard               # Shows this text in the browser's tab
     env_file:
       - /opt/docker/vps-stack/env/traefik.env
     secrets:
