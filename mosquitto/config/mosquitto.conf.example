@@ -1,0 +1,23 @@
+# Plain MQTT listener (optional,  keep if you need local/insecure access, otherwise comment out or remove)
+# listener 1883
+
+# Secure MQTT (MQTTS) listener on 8883
+listener 8883
+
+# === Certificate settings for Let's Encrypt wildcard ===
+cafile     /mosquitto/config/fullchain.pem
+certfile   /mosquitto/config/fullchain.pem
+keyfile    /mosquitto/config/privkey.pem
+
+# Strongly recommended  (modern & secure)
+tls_version tlsv1.3
+
+# Common settings
+require_certificate false          # set to true only if you want client certificate authentication
+# allow_anonymous true             # or false + use password_file / acl_file
+# password_file /mosquitto/config/passwordfile.txt   # if using username/password auth
+
+# Optional  (useful during initial setup / debugging)
+log_type all
+log_dest file /mosquitto/log/mosquitto.log
+log_dest stdout

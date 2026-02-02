@@ -18,6 +18,18 @@ services:
         ipv4_address: 192.168.0.11
     restart: unless-stopped
 
+  acme:   # ACME protocol client, used to issue + renew certificates
+    image: neilpang/acme.sh
+    container_name: acme-mqtt
+    restart: unless-stopped
+    env_file:
+      - /opt/docker/vps-stack/env/acme.env
+    volumes:
+      - /opt/docker/vps-stack/acme-config:/acme.sh
+      - /opt/docker/vps-stack/mosquitto/renew-hook.sh:/renew-hook.sh:ro
+      - /opt/docker/vps-stack/mosquitto/config:/mosquitto-config
+    command: daemon
+
   ha01:
     image: homeassistant/home-assistant:stable
     container_name: ha01
