@@ -7,7 +7,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.tcp.routers.zigbee2mqtt-01.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
-      - traefik.tcp.routers.zigbee2mqtt-01.entrypoints=zigbee2mqtt   # your custom entrypoint
+      - traefik.tcp.routers.zigbee2mqtt-01.entrypoints=zigbee2mqtt-01   # your custom entrypoint
       - traefik.tcp.routers.zigbee2mqtt-01.service=zigbee2mqtt-01-svc
       - traefik.tcp.services.zigbee2mqtt-01-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
     
@@ -32,7 +32,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.tcp.routers.zigbee2mqtt-02.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
-      - traefik.tcp.routers.zigbee2mqtt-02.entrypoints=zigbee2mqtt   # your custom entrypoint
+      - traefik.tcp.routers.zigbee2mqtt-02.entrypoints=zigbee2mqtt-02   # your custom entrypoint
       - traefik.tcp.routers.zigbee2mqtt-02.service=zigbee2mqtt-02-svc
       - traefik.tcp.services.zigbee2mqtt-02-svc.loadbalancer.server.port=6639  # internal TCP port where Z2M container listens for serial
     
