@@ -13,7 +13,7 @@ services:
       - /opt/docker/vps-stack/env/cloudflare.env
     networks:
       wan-net:
-        ipv4_address: 192.0.2.2
+        ipv4_address: 192.0.2.3
     restart: unless-stopped
     depends_on:
       - traefik
@@ -52,6 +52,9 @@ services:
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
       - --entrypoints.websecure.http.tls.domains[0].main=*.${VPS_DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
+      # Other entrypoints
+      - --entrypoints.zigbee2mqtt.address=:6638
+
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel
       - traefik.enable=true
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_URL}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
@@ -76,13 +79,15 @@ services:
 
     networks:
       wan-net:
-        ipv4_address: 192.0.2.3
+        ipv4_address: 192.0.2.2
       vpn-net:
         ipv4_address: 192.0.2.10
-      ha-net:
-        ipv4_address: 192.168.0.2
       lab-net:
         ipv4_address: 192.168.1.2
+      traefik-z2m-net:
+        ipv4_address: 192.168.0.2
+      traefik-ha-net:
+        ipv4_address: 192.168.0.26
 
     healthcheck:
       test: netstat -ptan | grep -E "443.*LISTEN" || exit 1
@@ -136,14 +141,6 @@ networks:
         - subnet: 192.0.2.8/29
           gateway: 192.0.2.9
 
-  ha-net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.0.0/24
-          gateway: 192.168.0.1
-
   lab-net:
     driver: bridge
     ipam:
@@ -151,3 +148,36 @@ networks:
       config:
         - subnet: 192.168.1.0/24
           gateway: 192.168.1.1
+
+  traefik-z2m-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/29
+          gateway: 192.168.0.1
+
+  z2m-mqtt-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.8/29
+          gateway: 192.168.0.9
+
+  mqtt-ha-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.16/29
+          gateway: 192.168.0.17
+
+  traefik-ha-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.24/29
+          gateway: 192.168.0.25
+

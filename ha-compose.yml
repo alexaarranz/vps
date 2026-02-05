@@ -1,7 +1,33 @@
 services:
+  
+  zigbee2mqtt:
+    image: ghcr.io/koenkk/zigbee2mqtt:latest
+    container_name: z2m
+    
+    labels:
+      - traefik.enable=true
+      - traefik.tcp.routers.zigbee2mqtt.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
+      - traefik.tcp.routers.zigbee2mqtt.entrypoints=zigbee2mqtt   # your custom entrypoint
+      - traefik.tcp.routers.zigbee2mqtt.service=zigbee2mqtt-svc
+      - traefik.tcp.services.zigbee2mqtt-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
+    
+    volumes:
+      - /opt/docker/vps-stack/zigbee2mqtt/data:/app/data
+    environment:
+      - TZ=${TZ}
+    depends_on:
+      - mqtt-broker
+    networks:
+      traefik-z2m-net:
+        ipv4_address: 192.168.0.3
+      z2m-mqtt-net:
+        ipv4_address: 192.168.0.10  
+ 
+    restart: unless-stopped
+
   mqtt-broker:
     image: eclipse-mosquitto:latest
-    container_name: mqtt-broker
+    container_name: mosquitto
     # labels:  # Use the traefik labels only if MQTT comes from traefik; otherwise comment out
     # - traefik.http.routers.mqtt.rule=Host(`${MQTT_URL}`)
     # - traefik.http.routers.mqtt.entrypoints=websecure
@@ -13,8 +39,10 @@ services:
       - /opt/docker/vps-stack/mosquitto/data:/mosquitto/data
       - /opt/docker/vps-stack/mosquitto/log:/mosquitto/log
     networks:
-      ha-net:
+      z2m-mqtt-net:
         ipv4_address: 192.168.0.11
+      mqtt-ha-net:
+        ipv4_address: 192.168.0.18
     restart: unless-stopped
 
   acme:   # ACME protocol client, used to issue + renew certificates
@@ -43,8 +71,10 @@ services:
     environment:
       - TZ=${TZ}
     networks:
-      ha-net:
-        ipv4_address: 192.168.0.101
+      mqtt-ha-net:
+        ipv4_address: 192.168.0.19
+      traefik-ha-net:
+        ipv4_address: 192.168.0.27
     restart: unless-stopped
 
   ha02:
@@ -61,6 +91,8 @@ services:
     environment:
       - TZ=${TZ}
     networks:
-      ha-net:
-        ipv4_address: 192.168.0.102
+      mqtt-ha-net:
+        ipv4_address: 192.168.0.19    
+      traefik-ha-net:
+        ipv4_address: 192.168.0.28
     restart: unless-stopped
