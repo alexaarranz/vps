@@ -44,10 +44,10 @@ services:
       - traefik.tcp.routers.zigbee2mqtt-02.service=zigbee2mqtt-02-svc
       - traefik.tcp.services.zigbee2mqtt-02-svc.loadbalancer.server.port=6639  # internal TCP port where Z2M container listens for serial
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.z2m-01.rule=Host(`${Z2M-02_URL}`)
-      - traefik.http.routers.z2m-01.entrypoints=websecure
-      - traefik.http.routers.z2m-01.tls.certresolver=letsencrypt
-      - traefik.http.services.z2m-01.loadbalancer.server.port=8080
+      - traefik.http.routers.z2m-02.rule=Host(`${Z2M-02_URL}`)
+      - traefik.http.routers.z2m-02.entrypoints=websecure
+      - traefik.http.routers.z2m-02.tls.certresolver=letsencrypt
+      - traefik.http.services.z2m-02.loadbalancer.server.port=8080
       - traefik.docker.network=vps-stack_traefik-z2m-net
 
     volumes:
