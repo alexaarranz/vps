@@ -92,7 +92,7 @@ services:
       - TZ=${TZ}
     networks:
       mqtt-ha-net:
-        ipv4_address: 192.168.0.19    
+        ipv4_address: 192.168.0.20
       traefik-ha-net:
         ipv4_address: 192.168.0.28
     restart: unless-stopped
