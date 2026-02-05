@@ -1,28 +1,51 @@
 services:
   
-  zigbee2mqtt:
+  zigbee2mqtt-01:
     image: ghcr.io/koenkk/zigbee2mqtt:latest
-    container_name: z2m
+    container_name: z2m-01
     
     labels:
       - traefik.enable=true
-      - traefik.tcp.routers.zigbee2mqtt.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
-      - traefik.tcp.routers.zigbee2mqtt.entrypoints=zigbee2mqtt   # your custom entrypoint
-      - traefik.tcp.routers.zigbee2mqtt.service=zigbee2mqtt-svc
-      - traefik.tcp.services.zigbee2mqtt-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
+      - traefik.tcp.routers.zigbee2mqtt-01.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
+      - traefik.tcp.routers.zigbee2mqtt-01.entrypoints=zigbee2mqtt   # your custom entrypoint
+      - traefik.tcp.routers.zigbee2mqtt-01.service=zigbee2mqtt-01-svc
+      - traefik.tcp.services.zigbee2mqtt-01-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
     
     volumes:
-      - /opt/docker/vps-stack/zigbee2mqtt/data:/app/data
+      - /opt/docker/vps-stack/zigbee2mqtt-01/data:/app/data
     environment:
       - TZ=${TZ}
     depends_on:
       - mqtt-broker
     networks:
       traefik-z2m-net:
-        ipv4_address: 192.168.0.3
+        ipv4_address: 192.168.1.2
       z2m-mqtt-net:
-        ipv4_address: 192.168.0.10  
- 
+        ipv4_address: 192.168.2.2  
+    restart: unless-stopped
+
+  zigbee2mqtt-02:
+    image: ghcr.io/koenkk/zigbee2mqtt:latest
+    container_name: z2m-02
+    
+    labels:
+      - traefik.enable=true
+      - traefik.tcp.routers.zigbee2mqtt-02.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
+      - traefik.tcp.routers.zigbee2mqtt-02.entrypoints=zigbee2mqtt   # your custom entrypoint
+      - traefik.tcp.routers.zigbee2mqtt-02.service=zigbee2mqtt-02-svc
+      - traefik.tcp.services.zigbee2mqtt-02-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
+    
+    volumes:
+      - /opt/docker/vps-stack/zigbee2mqtt-02/data:/app/data
+    environment:
+      - TZ=${TZ}
+    depends_on:
+      - mqtt-broker
+    networks:
+      traefik-z2m-net:
+        ipv4_address: 192.168.1.3
+      z2m-mqtt-net:
+        ipv4_address: 192.168.2.3  
     restart: unless-stopped
 
   mqtt-broker:
@@ -40,10 +63,11 @@ services:
       - /opt/docker/vps-stack/mosquitto/log:/mosquitto/log
     networks:
       z2m-mqtt-net:
-        ipv4_address: 192.168.0.11
+        ipv4_address: 192.168.2.1
       mqtt-ha-net:
-        ipv4_address: 192.168.0.18
+        ipv4_address: 192.168.3.1
     restart: unless-stopped
+
 
   acme:   # ACME protocol client, used to issue + renew certificates
     image: neilpang/acme.sh
@@ -72,9 +96,9 @@ services:
       - TZ=${TZ}
     networks:
       mqtt-ha-net:
-        ipv4_address: 192.168.0.19
+        ipv4_address: 192.168.3.2
       traefik-ha-net:
-        ipv4_address: 192.168.0.27
+        ipv4_address: 192.168.4.2
     restart: unless-stopped
 
   ha02:
@@ -92,7 +116,7 @@ services:
       - TZ=${TZ}
     networks:
       mqtt-ha-net:
-        ipv4_address: 192.168.0.20
+        ipv4_address: 192.168.3.3
       traefik-ha-net:
-        ipv4_address: 192.168.0.28
+        ipv4_address: 192.168.4.3
     restart: unless-stopped

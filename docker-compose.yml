@@ -83,11 +83,11 @@ services:
       vpn-net:
         ipv4_address: 192.0.2.10
       lab-net:
-        ipv4_address: 192.168.1.2
+        ipv4_address: 192.168.0.1
       traefik-z2m-net:
-        ipv4_address: 192.168.0.2
+        ipv4_address: 192.168.1.1
       traefik-ha-net:
-        ipv4_address: 192.168.0.26
+        ipv4_address: 192.168.4.1
 
     healthcheck:
       test: netstat -ptan | grep -E "443.*LISTEN" || exit 1
@@ -143,41 +143,40 @@ networks:
 
   lab-net:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
-      driver: default
       config:
-        - subnet: 192.168.1.0/24
-          gateway: 192.168.1.1
+        - subnet: 192.168.0.0/24
 
   traefik-z2m-net:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
-      driver: default
       config:
-        - subnet: 192.168.0.0/29
-          gateway: 192.168.0.1
+        - subnet: 192.168.1.0/24
 
   z2m-mqtt-net:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
-      driver: default
       config:
-        - subnet: 192.168.0.8/29
-          gateway: 192.168.0.9
+        - subnet: 192.168.2.0/24
 
   mqtt-ha-net:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
-      driver: default
       config:
-        - subnet: 192.168.0.16/29
-          gateway: 192.168.0.17
+        - subnet: 192.168.3.0/24
 
   traefik-ha-net:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
-      driver: default
       config:
-        - subnet: 192.168.0.24/29
-          gateway: 192.168.0.25
-
+        - subnet: 192.168.4.0/24
