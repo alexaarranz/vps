@@ -5,12 +5,19 @@ services:
     container_name: z2m-01
     
     labels:
+      # Set of labels for mqtt traffic:
       - traefik.enable=true
       - traefik.tcp.routers.zigbee2mqtt-01.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
       - traefik.tcp.routers.zigbee2mqtt-01.entrypoints=zigbee2mqtt-01   # your custom entrypoint
       - traefik.tcp.routers.zigbee2mqtt-01.service=zigbee2mqtt-01-svc
       - traefik.tcp.services.zigbee2mqtt-01-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
-    
+      # Set of labels for http traffic (Z2M dashboard):
+      - traefik.http.routers.z2m-01.rule=Host(`${Z2M-01_URL}`)
+      - traefik.http.routers.z2m-01.entrypoints=websecure
+      - traefik.http.routers.z2m-01.tls.certresolver=letsencrypt
+      - traefik.http.services.z2m-01.loadbalancer.server.port=8080
+      - traefik.docker.network=vps-stack_traefik-z2m-net
+
     volumes:
       - /opt/docker/vps-stack/zigbee2mqtt-01/data:/app/data
     environment:
@@ -30,12 +37,19 @@ services:
     container_name: z2m-02
     
     labels:
+      # Set of labels for mqtt traffic:
       - traefik.enable=true
       - traefik.tcp.routers.zigbee2mqtt-02.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
       - traefik.tcp.routers.zigbee2mqtt-02.entrypoints=zigbee2mqtt-02   # your custom entrypoint
       - traefik.tcp.routers.zigbee2mqtt-02.service=zigbee2mqtt-02-svc
       - traefik.tcp.services.zigbee2mqtt-02-svc.loadbalancer.server.port=6639  # internal TCP port where Z2M container listens for serial
-    
+      # Set of labels for http traffic (Z2M dashboard):
+      - traefik.http.routers.z2m-01.rule=Host(`${Z2M-02_URL}`)
+      - traefik.http.routers.z2m-01.entrypoints=websecure
+      - traefik.http.routers.z2m-01.tls.certresolver=letsencrypt
+      - traefik.http.services.z2m-01.loadbalancer.server.port=8080
+      - traefik.docker.network=vps-stack_traefik-z2m-net
+
     volumes:
       - /opt/docker/vps-stack/zigbee2mqtt-02/data:/app/data
     environment:
