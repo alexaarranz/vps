@@ -96,10 +96,11 @@ services:
     environment:
       - TZ=${TZ}
     networks:
-      mqtt-ha-net:
-        ipv4_address: 192.168.3.3
       traefik-ha-net:
         ipv4_address: 192.168.4.3
+      mqtt-ha-net:
+        ipv4_address: 192.168.3.3
+
     restart: unless-stopped
 
   ha02:
