@@ -54,9 +54,9 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
       # Other entrypoints
       - --entrypoints.zigbee2mqtt-01.address=:6638
-      - --entrypoints.zigbee2mqtt-02.address=:6638
+      - --entrypoints.zigbee2mqtt-02.address=:6639
 
-    labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel
+    labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel (+ basic auth)
       - traefik.enable=true
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_URL}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
       - traefik.http.routers.traefik.entrypoints=websecure
@@ -84,11 +84,11 @@ services:
       vpn-net:
         ipv4_address: 192.0.2.10
       lab-net:
-        ipv4_address: 192.168.0.1
+        ipv4_address: 192.168.0.2
       traefik-z2m-net:
-        ipv4_address: 192.168.1.1
+        ipv4_address: 192.168.1.2
       traefik-ha-net:
-        ipv4_address: 192.168.4.1
+        ipv4_address: 192.168.4.2
 
     healthcheck:
       test: netstat -ptan | grep -E "443.*LISTEN" || exit 1
@@ -144,40 +144,40 @@ networks:
 
   lab-net:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
+      driver: default
       config:
         - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
 
   traefik-z2m-net:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
+      driver: default
       config:
         - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
 
   z2m-mqtt-net:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
+      driver: default
       config:
         - subnet: 192.168.2.0/24
+          gateway: 192.168.2.1
 
   mqtt-ha-net:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
+      driver: default
       config:
         - subnet: 192.168.3.0/24
+          gateway: 192.168.3.1
 
   traefik-ha-net:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.inhibit_ipv4: "true"
     ipam:
+      driver: default
       config:
         - subnet: 192.168.4.0/24
+          gateway: 192.168.4.1

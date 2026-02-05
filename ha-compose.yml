@@ -19,9 +19,9 @@ services:
       - mqtt-broker
     networks:
       traefik-z2m-net:
-        ipv4_address: 192.168.1.2
+        ipv4_address: 192.168.1.3
       z2m-mqtt-net:
-        ipv4_address: 192.168.2.2  
+        ipv4_address: 192.168.2.3  
     restart: unless-stopped
 
 
@@ -44,9 +44,9 @@ services:
       - mqtt-broker
     networks:
       traefik-z2m-net:
-        ipv4_address: 192.168.1.3
+        ipv4_address: 192.168.1.4
       z2m-mqtt-net:
-        ipv4_address: 192.168.2.3
+        ipv4_address: 192.168.2.4
     restart: unless-stopped
 
   mqtt-broker:
@@ -64,9 +64,9 @@ services:
       - /opt/docker/vps-stack/mosquitto/log:/mosquitto/log
     networks:
       z2m-mqtt-net:
-        ipv4_address: 192.168.2.1
+        ipv4_address: 192.168.2.2
       mqtt-ha-net:
-        ipv4_address: 192.168.3.1
+        ipv4_address: 192.168.3.2
     restart: unless-stopped
 
 
@@ -97,9 +97,9 @@ services:
       - TZ=${TZ}
     networks:
       mqtt-ha-net:
-        ipv4_address: 192.168.3.2
+        ipv4_address: 192.168.3.3
       traefik-ha-net:
-        ipv4_address: 192.168.4.2
+        ipv4_address: 192.168.4.3
     restart: unless-stopped
 
   ha02:
@@ -117,7 +117,7 @@ services:
       - TZ=${TZ}
     networks:
       mqtt-ha-net:
-        ipv4_address: 192.168.3.3
+        ipv4_address: 192.168.3.4
       traefik-ha-net:
-        ipv4_address: 192.168.4.3
+        ipv4_address: 192.168.4.4
     restart: unless-stopped
