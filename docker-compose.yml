@@ -53,8 +53,8 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].main=*.${VPS_DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
       # Other entrypoints
-      - --entrypoints.zigbee2mqtt-01.address=:6638
-      - --entrypoints.zigbee2mqtt-02.address=:6639
+      - --entrypoints.zigbee2mqtt-01-serial.address=:6638
+      - --entrypoints.zigbee2mqtt-02-serial.address=:6639
 
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel (+ basic auth)
       - traefik.enable=true
