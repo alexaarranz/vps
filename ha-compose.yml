@@ -12,7 +12,7 @@ services:
       - traefik.tcp.routers.zigbee2mqtt-01-serial.service=zigbee2mqtt-01-serial-svc
       - traefik.tcp.services.zigbee2mqtt-01-serial-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.zigbee2mqtt-01-web.rule=Host(`${Z2M-01_URL}`)
+      - traefik.http.routers.zigbee2mqtt-01-web.rule=Host(`${Z2M01_URL}`)
       - traefik.http.routers.zigbee2mqtt-01-web.entrypoints=websecure
       - traefik.http.routers.zigbee2mqtt-01-web.tls=true
       - traefik.http.routers.zigbee2mqtt-01-web.tls.certresolver=letsencrypt
@@ -46,7 +46,7 @@ services:
       - traefik.tcp.routers.zigbee2mqtt-02-serial.service=zigbee2mqtt-02-serial-svc
       - traefik.tcp.services.zigbee2mqtt-02-serial-svc.loadbalancer.server.port=6639  # internal TCP port where Z2M container listens for serial
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.zigbee2mqtt-02-web.rule=Host(`${Z2M-02_URL}`)
+      - traefik.http.routers.zigbee2mqtt-02-web.rule=Host(`${Z2M02_URL}`)
       - traefik.http.routers.zigbee2mqtt-02-web.entrypoints=websecure
       - traefik.http.routers.zigbee2mqtt-02-web.tls=true
       - traefik.http.routers.zigbee2mqtt-02-web.tls.certresolver=letsencrypt
