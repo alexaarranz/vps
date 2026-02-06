@@ -2,7 +2,7 @@ services:
   
   zigbee2mqtt-01:
     image: ghcr.io/koenkk/zigbee2mqtt:latest
-    container_name: z2m-01
+    container_name: zigbee2mqtt-01
     
     labels:
       # Set of labels for mqtt traffic:
@@ -34,7 +34,7 @@ services:
 
   zigbee2mqtt-02:
     image: ghcr.io/koenkk/zigbee2mqtt:latest
-    container_name: z2m-02
+    container_name: zigbee2mqtt-02
     
     labels:
       # Set of labels for mqtt traffic:
