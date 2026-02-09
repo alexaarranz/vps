@@ -3,6 +3,8 @@ secrets:
     file: /opt/docker/vps-stack/secrets/traefik.secret   # Contains credentials for Traefik's dashboard
   wireguard:
     file: /opt/docker/vps-stack/secrets/wireguard.secret   # Wireguard configuration file
+  wg-easy_auth:
+    file: /opt/docker/vps-stack/secrets/wg-easy.secret
 
 services:
   cloudflared:
