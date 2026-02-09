@@ -132,6 +132,10 @@ services:
         ipv4_address: 192.168.4.3
       mqtt-ha-net:
         ipv4_address: 192.168.3.3
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    network_mode: host
     extra_hosts:
       - "mqtt.myhomeassistant.app:192.168.3.2"
 
