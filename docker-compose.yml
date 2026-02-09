@@ -120,12 +120,7 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 1
-
-include:
-#  - lab-compose.yml
-   - ha-compose.yml
-
-wg-easy:
+  wg-easy:
     image: ghcr.io/wg-easy/wg-easy
     container_name: wg-easy
     env_file:
@@ -155,6 +150,11 @@ wg-easy:
     networks:
       vpn-net:
         ipv4_address: 192.0.2.12
+
+include:
+#  - lab-compose.yml
+   - ha-compose.yml
+
 
 networks:
   wan-net:
