@@ -52,11 +52,13 @@ services:
       - traefik.tcp.routers.zigbee2mqtt-02-serial.service=zigbee2mqtt-02-serial-svc
       - traefik.tcp.services.zigbee2mqtt-02-serial-svc.loadbalancer.server.port=6639  # internal TCP port where Z2M container listens for serial
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.zigbee2mqtt-02-web.rule=Host(`${Z2M02_URL}`)
+      - traefik.http.routers.zigbee2mqtt-01-web.rule=Host(`${HA02_URL}`) && PathPrefix(`${Z2M_PATH}`)
       - traefik.http.routers.zigbee2mqtt-02-web.entrypoints=websecure
       - traefik.http.routers.zigbee2mqtt-02-web.tls=true
       - traefik.http.routers.zigbee2mqtt-02-web.tls.certresolver=letsencrypt
       - traefik.http.routers.zigbee2mqtt-02-web.service=zigbee2mqtt-02-web-svc
+      - traefik.http.routers.zigbee2mqtt-02-web.middlewares=strip-z2m  # Attach middleware
+      - traefik.http.middlewares.strip-z2m.stripprefix.prefixes=/z2m  # Strips /z2m before forwarding
       - traefik.http.services.zigbee2mqtt-02-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
       - traefik.docker.network=vps-stack_traefik-z2m-net
     volumes:
@@ -139,6 +141,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.ha02.rule=Host(`${HA02_URL}`)
       - traefik.http.routers.ha02.entrypoints=websecure
+      - traefik.http.routers.ha02.priority=5
       - traefik.http.routers.ha02.tls.certresolver=letsencrypt
       - traefik.http.services.ha02.loadbalancer.server.port=8123
       - traefik.docker.network=vps-stack_traefik-ha-net
