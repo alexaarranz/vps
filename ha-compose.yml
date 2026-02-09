@@ -54,6 +54,7 @@ services:
       # Set of labels for http traffic (Z2M dashboard):
       - traefik.http.routers.zigbee2mqtt-01-web.rule=Host(`${HA02_URL}`) && PathPrefix(`${Z2M_PATH}`)
       - traefik.http.routers.zigbee2mqtt-02-web.entrypoints=websecure
+      - traefik.http.routers.zigbee2mqtt-01-web.priority=10
       - traefik.http.routers.zigbee2mqtt-02-web.tls=true
       - traefik.http.routers.zigbee2mqtt-02-web.tls.certresolver=letsencrypt
       - traefik.http.routers.zigbee2mqtt-02-web.service=zigbee2mqtt-02-web-svc
