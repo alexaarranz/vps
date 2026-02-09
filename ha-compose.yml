@@ -19,6 +19,8 @@ services:
       - traefik.http.routers.zigbee2mqtt-01-web.service=zigbee2mqtt-01-web-svc
       - traefik.http.services.zigbee2mqtt-01-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
       - traefik.docker.network=vps-stack_traefik-z2m-net
+    env_file:
+      - /opt/docker/vps-stack/env/z2m-01.env
     volumes:
       - /opt/docker/vps-stack/zigbee2mqtt-01/data:/app/data
     environment:
