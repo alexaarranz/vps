@@ -17,6 +17,8 @@ services:
       - traefik.http.routers.zigbee2mqtt-01-web.tls=true
       - traefik.http.routers.zigbee2mqtt-01-web.tls.certresolver=letsencrypt
       - traefik.http.routers.zigbee2mqtt-01-web.service=zigbee2mqtt-01-web-svc
+      - traefik.http.routers.zigbee2mqtt-01-web.middlewares=strip-z2m  # Attach middleware
+      - traefik.http.middlewares.strip-z2m.stripprefix.prefixes=/z2m  # Strips /z2m before forwarding
       - traefik.http.services.zigbee2mqtt-01-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
       - traefik.docker.network=vps-stack_traefik-z2m-net
     env_file:
