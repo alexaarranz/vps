@@ -114,6 +114,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.ha01.rule=Host(`${HA01_URL}`)
       - traefik.http.routers.ha01.entrypoints=websecure
+      - traefik.http.routers.ha01.priority=5
       - traefik.http.routers.ha01.tls.certresolver=letsencrypt
       - traefik.http.services.ha01.loadbalancer.server.port=8123
       - traefik.docker.network=vps-stack_traefik-ha-net
