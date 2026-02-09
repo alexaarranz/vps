@@ -127,7 +127,9 @@ services:
     container_name: wg-easy
     env_file:
       - /opt/docker/vps-stack/env/wg-easy.env
-      - /opt/docker/vps-stack/secrets/wg-easy.secret
+    #  - /opt/docker/vps-stack/secrets/wg-easy.secret
+    secrets:
+      - wg-easy_auth
     volumes:
       - /opt/docker/vps-stack/wg-easy:/etc/wg-easy
     cap_add:
