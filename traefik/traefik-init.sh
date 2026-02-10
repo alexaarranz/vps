@@ -9,3 +9,5 @@ echo "Custom route added: $(ip route show 100.64.0.0/16)"
 
 # Now hand over to the original Traefik entrypoint, passing all original arguments
 exec /entrypoint.sh "$@"
+
+# Make this script executable (chmod +x traefik-init.sh)

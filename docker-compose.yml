@@ -30,6 +30,9 @@ services:
     image: traefik:v3.6.7
     container_name: traefik
     restart: always
+    entrypoint: /traefik-init.sh
+    cap_add:
+      - NET_ADMIN # Required for the "ip route add" command in traefik-init.sh script
     command:
       - --log.level=DEBUG
       - --api.insecure=false                  # API not exposed on the entry point traefik (Dashboard, port 8080)
@@ -79,12 +82,15 @@ services:
     volumes:
       - /run/docker.sock:/var/run/docker.sock:ro    # So that Traefik can listen to the Docker events
       - /opt/docker/vps-stack/letsencrypt:/letsencrypt  # Let's Encrypt certificates storage
+      - /opt/docker/vps-stack/traefik/traefik-init.sh:/traefik-init.sh:ro # Mounts the script in traefik-init.sh
 
     networks:
       wan-net:
         ipv4_address: 192.0.2.2
       vpn-net:
         ipv4_address: 192.0.2.10
+      vpn-client-net:
+        ipv4_address: 192.0.2.18
       lab-net:
         ipv4_address: 192.168.0.2
       traefik-z2m-net:
@@ -155,6 +161,8 @@ services:
     networks:
       vpn-net:
         ipv4_address: 192.0.2.12
+      vpn-client-net:
+        ipv4_address: 192.0.2.20
 
 include:
 #  - lab-compose.yml
@@ -177,6 +185,14 @@ networks:
       config:
         - subnet: 192.0.2.8/29
           gateway: 192.0.2.9
+
+  vpn-client-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.0.2.16/29
+          gateway: 192.0.2.17
 
   lab-net:
     driver: bridge
