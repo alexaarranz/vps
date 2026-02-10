@@ -144,7 +144,7 @@ services:
     restart: unless-stopped
     labels:      # To enable wg-easy's dashboard via traefik 
       - traefik.enable=true
-      - traefik.http.routers.wg-easy-web.rule=Host(`vpn-eu-01.myhomeassistant.app`)   # or wg.vpn-eu-01...
+      - traefik.http.routers.wg-easy-web.rule=Host(`wg-eu-01.myhomeassistant.app`)   # or wg.vpn-eu-01...
       - traefik.http.routers.wg-easy-web.entrypoints=websecure
       - traefik.http.routers.wg-easy-web.tls.certresolver=letsencrypt
       - traefik.http.routers.wg-easy-web.service=wg-easy-web-svc
