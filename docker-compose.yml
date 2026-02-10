@@ -155,6 +155,7 @@ services:
       - traefik.http.routers.wg-easy-web.tls.certresolver=letsencrypt
       - traefik.http.routers.wg-easy-web.service=wg-easy-web-svc
       - traefik.http.services.wg-easy-web-svc.loadbalancer.server.port=51821
+      - traefik.docker.network=vps-stack_vpn-net
      # - traefik.http.routers.wg-easy-web.middlewares=auth
      # - traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/wg-easy_auth   # Basic auth middleware definition
      # - traefik.http.middlewares.auth.basicauth.realm=wg-easy Dashboard               # Shows this text in the browser's tab
