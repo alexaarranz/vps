@@ -129,7 +129,7 @@ services:
       start_period: 10s
       retries: 1
   wg-easy:
-    image: ghcr.io/wg-easy/wg-easy:latest
+    image: ghcr.io/wg-easy/wg-easy:15.2.2
     container_name: wg-easy
     env_file:
       - /opt/docker/vps-stack/env/wg-easy.env
