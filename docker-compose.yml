@@ -131,7 +131,7 @@ services:
     secrets:
       - wg-easy_auth
     volumes:
-      - /opt/docker/vps-stack/wg-easy:/etc/wg-easy
+      - /opt/docker/vps-stack/wg-easy:/etc/wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
