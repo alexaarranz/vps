@@ -39,6 +39,8 @@ services:
       - --api.dashboard=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false  # Only label-enabled containers
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true   # optional but recommended for hot reload
       - --serversTransport.insecureSkipVerify=true
       # Use the "certificatesresolvers" lines if set up LetsEncrypt certificate resolver (Cloudflare DNS-01 challenger). No cert required since Cloudflare secures the traffic
       # --certificatesresolvers.letsencrypt.acme.dnschallenge=true
@@ -82,6 +84,7 @@ services:
     volumes:
       - /run/docker.sock:/var/run/docker.sock:ro    # So that Traefik can listen to the Docker events
       - /opt/docker/vps-stack/letsencrypt:/letsencrypt  # Let's Encrypt certificates storage
+      - /opt/docker/vps-stack/traefik/dynamic:/etc/traefik/dynamic:ro
       - /opt/docker/vps-stack/traefik/traefik-init.sh:/traefik-init.sh:ro # Mounts the script in traefik-init.sh
 
     networks:

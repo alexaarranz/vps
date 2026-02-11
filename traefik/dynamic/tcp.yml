@@ -1,0 +1,14 @@
+tcp:
+  routers:
+    slzb-06-proxy:
+      entryPoints:
+        - zigbee2mqtt-01-serial
+      rule: HostSNI(`*`)          # Catch-all for plain TCP (no SNI needed/used here)
+      service: slzb-06-svc
+
+  services:
+    slzb-06-svc:
+      loadBalancer:
+        servers:
+          - address: "100.64.0.2:6640"   # Your SLZB-06 WireGuard IP + port
+          
