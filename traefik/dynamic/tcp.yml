@@ -1,31 +1,28 @@
 tcp:
 
-###  User 0001, Coordinator 01 (attached to zigbee2mqtt-01) ###
   routers:
-    user0001-01:
+
+    user0001-01:                    #  User 0001, Coordinator 01 (attached to zigbee2mqtt-01)
       entryPoints:
-        - zigbee2mqtt-01-serial      # Matches on TCP port 6001 (see docker-compose.yml)
+        - zigbee2mqtt-01-serial     # Matches on TCP port 6001 (see docker-compose.yml)
       rule: HostSNI(`*`)
       service: user0001-01-svc
 
+    user0002-01:                    #  User 0002, Coordinator 01 (attached to zigbee2mqtt-02)
+      entryPoints:
+        - zigbee2mqtt-02-serial     # Matches on TCP port 6002 (see docker-compose.yml)
+      rule: HostSNI(`*`)
+      service: user0002-01-svc
+
+
   services:
-    user0001-01-svc:
+
+    user0001-01-svc:                    #  User 0001, Coordinator 01 (attached to zigbee2mqtt-01)
       loadBalancer:
         servers:
           - address: "100.64.0.2:6638"  # Coordinator 01 (TCP port 6638)
 
-
-###  User 0002, Coordinator 01 (attached to zigbee2mqtt-02) ###
-
-  routers:
-    user0002-01:
-      entryPoints:
-        - zigbee2mqtt-02-serial      # Matches on TCP port 6002 (see docker-compose.yml)
-      rule: HostSNI(`*`)
-      service: user0002-01-svc
-
-  services:
-    user0002-01-svc:
+    user0002-01-svc:                    #  User 0002, Coordinator 01 (attached to zigbee2mqtt-02)
       loadBalancer:
         servers:
           - address: "100.64.0.3:6638"  # Coordinator 01 (TCP port 6638)      
