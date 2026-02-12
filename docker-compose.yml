@@ -42,6 +42,7 @@ services:
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true   # optional but recommended for hot reload
       - --serversTransport.insecureSkipVerify=true
+
       # Use the "certificatesresolvers" lines if set up LetsEncrypt certificate resolver (Cloudflare DNS-01 challenger). No cert required since Cloudflare secures the traffic
       # --certificatesresolvers.letsencrypt.acme.dnschallenge=true
       # --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
@@ -49,6 +50,7 @@ services:
       # --certificatesresolvers.letsencrypt.acme.dnschallenge.propagation.delayBeforeChecks=300  # Wait for DNS propagation (Cloudflare can be slow)
       # --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
       # --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+
       # Set up an insecure listener that redirects all traffic to TLS
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
@@ -60,8 +62,9 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].main=*.${VPS_DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
       # Other entrypoints
-      - --entrypoints.zigbee2mqtt-01-serial.address=:6640
-      - --entrypoints.zigbee2mqtt-02-serial.address=:6639
+      - --entrypoints.zigbee2mqtt-01-serial.address=:6001 # z2m-01 sends to tcp://traefik:6001, traefik forwards to user0001-01 (see/traefik/dynamic/tcp.yml)
+      - --entrypoints.zigbee2mqtt-02-serial.address=:6002 # z2m-02 sends to tcp://traefik:6002, traefik forwards to user0002-01 (see/traefik/dynamic/tcp.yml)
+    # - --entrypoints.zigbee2mqtt-03-serial.address=:6003 # z2m-03 sends to tcp://traefik:6003 ...
 
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel (+ basic auth)
       - traefik.enable=true
@@ -131,6 +134,7 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 1
+
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:15.2.2
     container_name: wg-easy
@@ -153,15 +157,13 @@ services:
     restart: unless-stopped
     labels:      # To enable wg-easy's dashboard via traefik 
       - traefik.enable=true
-      - traefik.http.routers.wg-easy-web.rule=Host(`wg-eu-01.myhomeassistant.app`)   # or wg.vpn-eu-01...
+      - traefik.http.routers.wg-easy-web.rule=Host(`wg-eu-01.myhomeassistant.app`)
       - traefik.http.routers.wg-easy-web.entrypoints=websecure
       - traefik.http.routers.wg-easy-web.tls.certresolver=letsencrypt
       - traefik.http.routers.wg-easy-web.service=wg-easy-web-svc
       - traefik.http.services.wg-easy-web-svc.loadbalancer.server.port=51821
       - traefik.docker.network=vps-stack_vpn-net
-     # - traefik.http.routers.wg-easy-web.middlewares=auth
-     # - traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/wg-easy_auth   # Basic auth middleware definition
-     # - traefik.http.middlewares.auth.basicauth.realm=wg-easy Dashboard               # Shows this text in the browser's tab
+
     networks:
       vpn-net:
         ipv4_address: 192.0.2.12

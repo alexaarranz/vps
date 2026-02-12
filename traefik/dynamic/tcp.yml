@@ -1,14 +1,32 @@
 tcp:
+
+###  User 0001, Coordinator 01 (attached to zigbee2mqtt-01) ###
   routers:
-    slzb-06-proxy:
+    user0001-01:
       entryPoints:
-        - zigbee2mqtt-01-serial
-      rule: HostSNI(`*`)          # Catch-all for plain TCP (no SNI needed/used here)
-      service: slzb-06-svc
+        - zigbee2mqtt-01-serial      # Matches on TCP port 6001 (see docker-compose.yml)
+      rule: HostSNI(`*`)
+      service: user0001-01-svc
 
   services:
-    slzb-06-svc:
+    user0001-01-svc:
       loadBalancer:
         servers:
-          - address: "100.64.0.2:6640"   # Your SLZB-06 WireGuard IP + port
+          - address: "100.64.0.2:6638"  # Coordinator 01 (TCP port 6638)
+
+
+###  User 0002, Coordinator 01 (attached to zigbee2mqtt-02) ###
+
+  routers:
+    user0002-01:
+      entryPoints:
+        - zigbee2mqtt-02-serial      # Matches on TCP port 6002 (see docker-compose.yml)
+      rule: HostSNI(`*`)
+      service: user0002-01-svc
+
+  services:
+    user0002-01-svc:
+      loadBalancer:
+        servers:
+          - address: "100.64.0.3:6638"  # Coordinator 01 (TCP port 6638)      
           
