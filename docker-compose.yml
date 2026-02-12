@@ -32,7 +32,7 @@ services:
     restart: always
     entrypoint: /traefik-init.sh
     cap_add:
-      - NET_ADMIN # Required for the "ip route add" command in traefik-init.sh script
+      - NET_ADMIN # Required for the "ip route add" command in the traefik-init.sh script
     command:
       - --log.level=DEBUG
       - --api.insecure=false                  # API not exposed on the entry point traefik (Dashboard, port 8080)
