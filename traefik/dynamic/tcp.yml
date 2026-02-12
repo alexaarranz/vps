@@ -4,13 +4,13 @@ tcp:
 
     user0001-01:                    #  User 0001, Coordinator 01 (attached to zigbee2mqtt-01)
       entryPoints:
-        - zigbee2mqtt-01-serial     # Matches on TCP port 6001 (see docker-compose.yml)
+        - z2m-01-serial     # Matches on TCP port 6001 (see docker-compose.yml)
       rule: HostSNI(`*`)
       service: user0001-01-svc
 
     user0002-01:                    #  User 0002, Coordinator 01 (attached to zigbee2mqtt-02)
       entryPoints:
-        - zigbee2mqtt-02-serial     # Matches on TCP port 6002 (see docker-compose.yml)
+        - z2m-02-serial     # Matches on TCP port 6002 (see docker-compose.yml)
       rule: HostSNI(`*`)
       service: user0002-01-svc
 

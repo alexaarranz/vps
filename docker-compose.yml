@@ -62,9 +62,9 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].main=*.${VPS_DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
       # Other entrypoints
-      - --entrypoints.zigbee2mqtt-01-serial.address=:6001 # z2m-01 sends to tcp://traefik:6001, traefik forwards to user0001-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
-      - --entrypoints.zigbee2mqtt-02-serial.address=:6002 # z2m-02 sends to tcp://traefik:6002, traefik forwards to user0002-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
-    # - --entrypoints.zigbee2mqtt-03-serial.address=:6003 # z2m-03 sends to tcp://traefik:6003 ...
+      - --entrypoints.z2m-01.address=:6001 # z2m-01 sends to tcp://traefik:6001, traefik forwards to user0001-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
+      - --entrypoints.z2m-02.address=:6002 # z2m-02 sends to tcp://traefik:6002, traefik forwards to user0002-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
+    # - --entrypoints.z2m-03.address=:6003 # z2m-03 sends to tcp://traefik:6003, ...
 
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel (+ basic auth)
       - traefik.enable=true

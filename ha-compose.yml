@@ -1,31 +1,31 @@
 services:
   
-  zigbee2mqtt-01:
+  z2m-01:
     image: ghcr.io/koenkk/zigbee2mqtt:latest
-    container_name: zigbee2mqtt-01
+    container_name: z2m-01
     
     labels:
       # Set of labels for mqtt traffic:
       - traefik.enable=true
-      - traefik.tcp.routers.zigbee2mqtt-01-serial.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
-      - traefik.tcp.routers.zigbee2mqtt-01-serial.entrypoints=zigbee2mqtt-01-serial   # your custom entrypoint
-      - traefik.tcp.routers.zigbee2mqtt-01-serial.service=zigbee2mqtt-01-serial-svc
-      - traefik.tcp.services.zigbee2mqtt-01-serial-svc.loadbalancer.server.port=6638  # internal TCP port where Z2M container listens for serial
+      - traefik.tcp.routers.z2m-01-serial.rule=HostSNI(`*`)         # catches all (no SNI-based routing needed for plain TCP)
+      - traefik.tcp.routers.z2m-01-serial.entrypoints=z2m-01        # custom entrypoint (on TCP 6001, see traefik configuration)
+      - traefik.tcp.routers.z2m-01-serial.service=z2m-01-serial-svc
+      - traefik.tcp.services.z2m-01-serial-svc.loadbalancer.server.port=6638  # internal TCP port where z2m-01 container listens to serial traffic
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.zigbee2mqtt-01-web.rule=Host(`${HA01_URL}`) && PathPrefix(`${Z2M_PATH}`)
-      - traefik.http.routers.zigbee2mqtt-01-web.entrypoints=websecure
-      - traefik.http.routers.zigbee2mqtt-01-web.priority=10
-      - traefik.http.routers.zigbee2mqtt-01-web.tls=true
-      - traefik.http.routers.zigbee2mqtt-01-web.tls.certresolver=letsencrypt
-      - traefik.http.routers.zigbee2mqtt-01-web.service=zigbee2mqtt-01-web-svc
-      - traefik.http.routers.zigbee2mqtt-01-web.middlewares=strip-z2m  # Attach middleware
+      - traefik.http.routers.z2m-01-web.rule=Host(`${HA01_URL}`) && PathPrefix(`${Z2M_PATH}`)
+      - traefik.http.routers.z2m-01-web.entrypoints=websecure
+      - traefik.http.routers.z2m-01-web.priority=10
+      - traefik.http.routers.z2m-01-web.tls=true
+      - traefik.http.routers.z2m-01-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.z2m-01-web.service=z2m-01-web-svc
+      - traefik.http.routers.z2m-01-web.middlewares=strip-z2m  # Attach middleware
       - traefik.http.middlewares.strip-z2m.stripprefix.prefixes=/z2m  # Strips /z2m before forwarding
-      - traefik.http.services.zigbee2mqtt-01-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
+      - traefik.http.services.z2m-01-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
       - traefik.docker.network=vps-stack_traefik-z2m-net
     env_file:
       - /opt/docker/vps-stack/env/z2m.env
     volumes:
-      - /opt/docker/vps-stack/zigbee2mqtt-01/data:/app/data
+      - /opt/docker/vps-stack/zigbee2mqtt/z2m-01:/app/data
     environment:
       - TZ=${TZ}
     depends_on:
@@ -40,32 +40,32 @@ services:
     restart: unless-stopped
 
 
-  zigbee2mqtt-02:
+  z2m-02:
     image: ghcr.io/koenkk/zigbee2mqtt:latest
-    container_name: zigbee2mqtt-02
+    container_name: z2m-02
     
     labels:
       # Set of labels for mqtt traffic:
       - traefik.enable=true
-      - traefik.tcp.routers.zigbee2mqtt-02-serial.rule=HostSNI(`*`)        # catches all (no SNI-based routing needed for plain TCP)
-      - traefik.tcp.routers.zigbee2mqtt-02-serial.entrypoints=zigbee2mqtt-02-serial   # your custom entrypoint
-      - traefik.tcp.routers.zigbee2mqtt-02-serial.service=zigbee2mqtt-02-serial-svc
-      - traefik.tcp.services.zigbee2mqtt-02-serial-svc.loadbalancer.server.port=6639  # internal TCP port where Z2M container listens for serial
+      - traefik.tcp.routers.z2m-02-serial.rule=HostSNI(`*`)         # catches all (no SNI-based routing needed for plain TCP)
+      - traefik.tcp.routers.z2m-02-serial.entrypoints=z2m-02        # custom entrypoint (on TCP 6002, see traefik configuration)
+      - traefik.tcp.routers.z2m-02-serial.service=z2m-02-serial-svc
+      - traefik.tcp.services.z2m-02-serial-svc.loadbalancer.server.port=6638  # internal TCP port where z2m-02 container listens to serial traffic
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.zigbee2mqtt-02-web.rule=Host(`${HA02_URL}`) && PathPrefix(`${Z2M_PATH}`)
-      - traefik.http.routers.zigbee2mqtt-02-web.entrypoints=websecure
-      - traefik.http.routers.zigbee2mqtt-02-web.priority=10
-      - traefik.http.routers.zigbee2mqtt-02-web.tls=true
-      - traefik.http.routers.zigbee2mqtt-02-web.tls.certresolver=letsencrypt
-      - traefik.http.routers.zigbee2mqtt-02-web.service=zigbee2mqtt-02-web-svc
-      - traefik.http.routers.zigbee2mqtt-02-web.middlewares=strip-z2m  # Attach middleware
+      - traefik.http.routers.z2m-02-web.rule=Host(`${HA02_URL}`) && PathPrefix(`${Z2M_PATH}`)
+      - traefik.http.routers.z2m-02-web.entrypoints=websecure
+      - traefik.http.routers.z2m-02-web.priority=10
+      - traefik.http.routers.z2m-02-web.tls=true
+      - traefik.http.routers.z2m-02-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.z2m-02-web.service=z2m-02-web-svc
+      - traefik.http.routers.z2m-02-web.middlewares=strip-z2m  # Attach middleware
       - traefik.http.middlewares.strip-z2m.stripprefix.prefixes=/z2m  # Strips /z2m before forwarding
-      - traefik.http.services.zigbee2mqtt-02-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
+      - traefik.http.services.z2m-02-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
       - traefik.docker.network=vps-stack_traefik-z2m-net
     env_file:
       - /opt/docker/vps-stack/env/z2m.env
     volumes:
-      - /opt/docker/vps-stack/zigbee2mqtt-02/data:/app/data
+      - /opt/docker/vps-stack/zigbee2mqtt/z2m-02:/app/data
     environment:
       - TZ=${TZ}
     depends_on:
