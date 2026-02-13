@@ -5,6 +5,8 @@ secrets:
     file: /opt/docker/vps-stack/secrets/wireguard.secret   # Wireguard configuration file
   wg-easy_auth:
     file: /opt/docker/vps-stack/secrets/wg-easy.secret
+  z2m-01-auth:
+    file: /opt/docker/vps-stack/secrets/z2m-01.secret
 
 services:
   cloudflared:
@@ -79,6 +81,8 @@ services:
       - /opt/docker/vps-stack/env/traefik.env
     secrets:
       - traefik_auth
+      - z2m-01-auth
+
     # ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
     # - "80:80"
     # - "443:443"
