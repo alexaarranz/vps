@@ -5,42 +5,23 @@ services:
     container_name: z2m-01
     
     labels:
-      # Set of labels for mqtt traffic:
+      # MQTT traffic:
       - traefik.enable=true
       - traefik.tcp.routers.z2m-01-serial.rule=HostSNI(`*`)         # catches all (no SNI-based routing needed for plain TCP)
       - traefik.tcp.routers.z2m-01-serial.entrypoints=z2m-01        # custom entrypoint (on TCP 6001, see traefik configuration)
       - traefik.tcp.routers.z2m-01-serial.service=z2m-01-serial-svc
       - traefik.tcp.services.z2m-01-serial-svc.loadbalancer.server.port=6638  # internal TCP port where z2m-01 container listens to serial traffic
       
-      # Set of labels for http traffic (Z2M dashboard):
-      #- traefik.http.routers.z2m-01-web.rule=Host(`${Z2M01_URL}`)
-      #- traefik.http.routers.z2m-01-web.entrypoints=websecure
-      #- traefik.http.routers.z2m-01-web.priority=10
-      #- traefik.http.routers.z2m-01-web.tls=true
-      #- traefik.http.routers.z2m-01-web.tls.certresolver=letsencrypt
-      #- traefik.http.routers.z2m-01-web.service=z2m-01-web-svc
-      #- traefik.http.services.z2m-01-web-svc.loadbalancer.server.port=8080   
-      # Basic Auth using secret file
-      #- traefik.http.middlewares.z2m-01-auth.basicauth.usersfile=/run/secrets/z2m-01-auth
-      #- traefik.http.routers.z2m-01-web.middlewares=z2m-01-auth
-
-      #- traefik.docker.network=vps-stack_traefik-z2m-net
-
-
       # HTTP dashboard routing - INTERNAL router (avoids prompting for authentication when requests come from within Home Assistant)
       - traefik.http.routers.z2m-01-web-internal.rule=Host(`${Z2M01_URL}`) && ClientIP(`192.168.4.0/24`)  # traefik-ha-net
-      - traefik.http.routers.z2m-01-web-internal.entrypoints=websecure
+      - traefik.http.routers.z2m-01-web-internal.entrypoints=web
       - traefik.http.routers.z2m-01-web-internal.priority=20          # Higher number = higher priority
-      - traefik.http.routers.z2m-01-web-internal.tls=true
-      - traefik.http.routers.z2m-01-web-internal.tls.certresolver=letsencrypt
       - traefik.http.routers.z2m-01-web-internal.service=z2m-01-web-svc
 
       # HTTP dashboard routing - EXTERNAL router (prompts for authentication when requests come from anywhere else (external URL)
       - traefik.http.routers.z2m-01-web-external.rule=Host(`${Z2M01_URL}`)
-      - traefik.http.routers.z2m-01-web-external.entrypoints=websecure
+      - traefik.http.routers.z2m-01-web-external.entrypoints=web
       - traefik.http.routers.z2m-01-web-external.priority=10          # Lower number = lower priority
-      - traefik.http.routers.z2m-01-web-external.tls=true
-      - traefik.http.routers.z2m-01-web-external.tls.certresolver=letsencrypt
       - traefik.http.routers.z2m-01-web-external.service=z2m-01-web-svc
       - traefik.http.routers.z2m-01-web-external.middlewares=z2m-01-auth
 
@@ -50,8 +31,8 @@ services:
       # Basic Auth middleware (still defined once)
       - traefik.http.middlewares.z2m-01-auth.basicauth.usersfile=/run/secrets/z2m-01-auth
 
+      # Traefik reaches z2m-01 from this network only:
       - traefik.docker.network=vps-stack_traefik-z2m-net
-
 
     env_file:
       - /opt/docker/vps-stack/env/z2m.env
@@ -76,23 +57,35 @@ services:
     container_name: z2m-02
     
     labels:
-      # Set of labels for mqtt traffic:
+      # MQTT traffic:
       - traefik.enable=true
       - traefik.tcp.routers.z2m-02-serial.rule=HostSNI(`*`)         # catches all (no SNI-based routing needed for plain TCP)
       - traefik.tcp.routers.z2m-02-serial.entrypoints=z2m-02        # custom entrypoint (on TCP 6002 , see traefik configuration)
       - traefik.tcp.routers.z2m-02-serial.service=z2m-02-serial-svc
       - traefik.tcp.services.z2m-02-serial-svc.loadbalancer.server.port=6638  # internal TCP port where z2m-02 container listens to serial traffic
-      # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.z2m-02-web.rule=Host(`${Z2M02_URL}`) # && PathPrefix(`${Z2M_PATH}`)
-      - traefik.http.routers.z2m-02-web.entrypoints=websecure
-      - traefik.http.routers.z2m-02-web.priority=10
-      - traefik.http.routers.z2m-02-web.tls=true
-      - traefik.http.routers.z2m-02-web.tls.certresolver=letsencrypt
-      - traefik.http.routers.z2m-02-web.service=z2m-02-web-svc
-     # - traefik.http.routers.z2m-02-web.middlewares=strip-z2m-02  # Attach middleware
-     # - traefik.http.middlewares.strip-z2m-02.stripprefix.prefixes=/z2m  # Strips /z2m before forwarding
-      - traefik.http.services.z2m-02-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
+
+      # HTTP dashboard routing - INTERNAL router (avoids prompting for authentication when requests come from within Home Assistant)
+      - traefik.http.routers.z2m-02-web-internal.rule=Host(`${Z2M02_URL}`) && ClientIP(`192.168.4.0/24`)  # traefik-ha-net
+      - traefik.http.routers.z2m-02-web-internal.entrypoints=web
+      - traefik.http.routers.z2m-02-web-internal.priority=20          # Higher number = higher priority
+      - traefik.http.routers.z2m-02-web-internal.service=z2m-02-web-svc
+
+      # HTTP dashboard routing - EXTERNAL router (prompts for authentication when requests come from anywhere else (external URL)
+      - traefik.http.routers.z2m-02-web-external.rule=Host(`${Z2M02_URL}`)
+      - traefik.http.routers.z2m-02-web-external.entrypoints=web
+      - traefik.http.routers.z2m-02-web-external.priority=10          # Lower number = lower priority
+      - traefik.http.routers.z2m-02-web-external.service=z2m-02-web-svc
+      - traefik.http.routers.z2m-02-web-external.middlewares=z2m-02-auth
+
+      # Service port (shared by both routers "z2m-02-web-internal" and "z2m-02-web-external")
+      - traefik.http.services.z2m-02-web-svc.loadbalancer.server.port=8080
+
+      # Basic Auth middleware (still defined once)
+      - traefik.http.middlewares.z2m-02-auth.basicauth.usersfile=/run/secrets/z2m-02-auth
+
+      # Traefik reaches z2m-01 from this network only:
       - traefik.docker.network=vps-stack_traefik-z2m-net
+
     env_file:
       - /opt/docker/vps-stack/env/z2m.env
     volumes:
@@ -149,9 +142,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.ha01.rule=Host(`${HA01_URL}`)
-      - traefik.http.routers.ha01.entrypoints=websecure
-      - traefik.http.routers.ha01.priority=5
-      - traefik.http.routers.ha01.tls.certresolver=letsencrypt
+      - traefik.http.routers.ha01.entrypoints=web
       - traefik.http.services.ha01.loadbalancer.server.port=8123
       - traefik.docker.network=vps-stack_traefik-ha-net
     volumes:
@@ -177,9 +168,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.ha02.rule=Host(`${HA02_URL}`)
-      - traefik.http.routers.ha02.entrypoints=websecure
-      - traefik.http.routers.ha02.priority=5
-      - traefik.http.routers.ha02.tls.certresolver=letsencrypt
+      - traefik.http.routers.ha02.entrypoints=web
       - traefik.http.services.ha02.loadbalancer.server.port=8123
       - traefik.docker.network=vps-stack_traefik-ha-net
     volumes:

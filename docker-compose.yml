@@ -6,7 +6,10 @@ secrets:
   wg-easy_auth:
     file: /opt/docker/vps-stack/secrets/wg-easy.secret
   z2m-01-auth:
-    file: /opt/docker/vps-stack/secrets/z2m-01.secret
+    file: /opt/docker/vps-stack/secrets/z2m-01.secret     # Credentials for z2m-01 Web GUI
+  z2m-02-auth:
+    file: /opt/docker/vps-stack/secrets/z2m-02.secret     # Credentials for z2m-02 Web GUI
+
 
 services:
   cloudflared:
@@ -45,25 +48,10 @@ services:
       - --providers.file.watch=true   # optional but recommended for hot reload
       - --serversTransport.insecureSkipVerify=true
 
-      # Use the "certificatesresolvers" lines if set up LetsEncrypt certificate resolver (Cloudflare DNS-01 challenger). No cert required since Cloudflare secures the traffic
-      # --certificatesresolvers.letsencrypt.acme.dnschallenge=true
-      # --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
-      # --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53
-      # --certificatesresolvers.letsencrypt.acme.dnschallenge.propagation.delayBeforeChecks=300  # Wait for DNS propagation (Cloudflare can be slow)
-      # --certificatesresolvers.letsencrypt.acme.email=${EMAIL_ADDRESS}
-      # --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-
-      # Set up an insecure listener that redirects all traffic to TLS
+      # Entrypoint for traefik's dashboard
       - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      # Set up the TLS configuration for traefik's websecure listener
-      - --entrypoints.websecure.http.tls=true
-      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=*.${VPS_DOMAIN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=${VPS_DOMAIN}
-      # Other entrypoints
+
+      # Entrypoints for TCP connections from Zigbee2MQTT containers
       - --entrypoints.z2m-01.address=:6001 # z2m-01 sends to tcp://traefik:6001, traefik forwards to user0001-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
       - --entrypoints.z2m-02.address=:6002 # z2m-02 sends to tcp://traefik:6002, traefik forwards to user0002-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
     # - --entrypoints.z2m-03.address=:6003 # z2m-03 sends to tcp://traefik:6003, ...
@@ -71,17 +59,19 @@ services:
     labels:   # These labels will allow access to traefik's dashboard via the Cloudflare tunnel (+ basic auth)
       - traefik.enable=true
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_URL}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-      - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.tls.certresolver=letsencrypt # Requests certs
+      - traefik.http.routers.traefik.entrypoints=web
       - traefik.http.routers.traefik.service=api@internal   # points to built-in dashboard
       - traefik.http.routers.traefik.middlewares=auth       # optional: add basic auth or forward-auth
       - traefik.http.middlewares.auth.basicauth.usersfile=/run/secrets/traefik_auth   # Basic auth middleware definition
       - traefik.http.middlewares.auth.basicauth.realm=Traefik Dashboard               # Shows this text in the browser's tab
+
     env_file:
       - /opt/docker/vps-stack/env/traefik.env
+
     secrets:
       - traefik_auth
       - z2m-01-auth
+      - z2m-02-auth
 
     # ports:            # NO PORTS: no host exposure; cloudflared reaches it internally - comment out after testing
     # - "80:80"
@@ -90,7 +80,7 @@ services:
 
     volumes:
       - /run/docker.sock:/var/run/docker.sock:ro    # So that Traefik can listen to the Docker events
-      - /opt/docker/vps-stack/letsencrypt:/letsencrypt  # Let's Encrypt certificates storage
+    #  - /opt/docker/vps-stack/letsencrypt:/letsencrypt  # Let's Encrypt certificates storage
       - /opt/docker/vps-stack/traefik/dynamic:/etc/traefik/dynamic:ro
       - /opt/docker/vps-stack/traefik/traefik-init.sh:/traefik-init.sh:ro # Mounts the script in traefik-init.sh
 
@@ -109,7 +99,7 @@ services:
         ipv4_address: 192.168.4.2
 
     healthcheck:
-      test: netstat -ptan | grep -E "443.*LISTEN" || exit 1
+      test: netstat -ptan | grep -E "80.*LISTEN" || exit 1
       interval: 10s
       timeout: 3s
       start_period: 60s
@@ -162,8 +152,7 @@ services:
     labels:      # To enable wg-easy's dashboard via traefik 
       - traefik.enable=true
       - traefik.http.routers.wg-easy-web.rule=Host(`wg-eu-01.myhomeassistant.app`)
-      - traefik.http.routers.wg-easy-web.entrypoints=websecure
-      - traefik.http.routers.wg-easy-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.wg-easy-web.entrypoints=web
       - traefik.http.routers.wg-easy-web.service=wg-easy-web-svc
       - traefik.http.services.wg-easy-web-svc.loadbalancer.server.port=51821
       - traefik.docker.network=vps-stack_vpn-net
