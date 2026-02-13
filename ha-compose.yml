@@ -18,14 +18,17 @@ services:
       - traefik.http.routers.z2m-01-web.tls=true
       - traefik.http.routers.z2m-01-web.tls.certresolver=letsencrypt
       - traefik.http.routers.z2m-01-web.service=z2m-01-web-svc
-      # - traefik.http.routers.z2m-01-web.middlewares=strip-z2m-01  # Attach middleware
-      - traefik.http.middlewares.strip-z2m-01.stripprefix.prefixes=/z2m  # Strips /z2m before forwarding
+      # Strips /z2m before forwarding
+      - traefik.http.middlewares.strip-z2m-01.stripprefix.prefixes=/z2m
       - traefik.http.services.z2m-01-web-svc.loadbalancer.server.port=8080    # Internal HTTP port for dashboard
-      - traefik.docker.network=vps-stack_traefik-z2m-net
       # Redirect "*.myhomeassistant.app/z2m" to "*.myhomeassistant.app/z2m/" (note the trailing "/") 
-      - traefik.http.middlewares.z2m-01-redirect.redirectregex.regex=^https?://[^/]+/z2m$
-      - traefik.http.middlewares.z2m-01-redirect.redirectregex.replacement=https://${host}/z2m/
-      - traefik.http.routers.z2m-01-web.middlewares=strip-z2m-01,z2m-01-redirect    # Attach middlewares
+      - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.regex=^https?://[^/]+/z2m$
+      - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.replacement=${1}/z2m/
+      - traefik.http.middlewares.z2m-slash-redirect.redirectregex.permanent=true
+      # Attach middlewares:
+      - traefik.http.routers.z2m-01-web.middlewares=strip-z2m-01,z2m-01-slash-redirect
+
+      - traefik.docker.network=vps-stack_traefik-z2m-net
 
     env_file:
       - /opt/docker/vps-stack/env/z2m.env
