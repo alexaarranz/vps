@@ -12,20 +12,20 @@ services:
       - traefik.tcp.routers.z2m-01-serial.service=z2m-01-serial-svc
       - traefik.tcp.services.z2m-01-serial-svc.loadbalancer.server.port=6638  # internal TCP port where z2m-01 container listens to serial traffic
       # Set of labels for http traffic (Z2M dashboard):
-      - traefik.http.routers.z2m-01-web.rule=Host(`${HA01_URL}`) && PathPrefix(`${Z2M_PATH}`)
+      - traefik.http.routers.z2m-01-web.rule=Host(`${Z2M01_URL}`) # && PathPrefix(`${Z2M_PATH}`)
       - traefik.http.routers.z2m-01-web.entrypoints=websecure
       - traefik.http.routers.z2m-01-web.priority=10
       - traefik.http.routers.z2m-01-web.tls=true
       - traefik.http.routers.z2m-01-web.tls.certresolver=letsencrypt
       - traefik.http.routers.z2m-01-web.service=z2m-01-web-svc
       # Strips /z2m before forwarding
-      - traefik.http.middlewares.strip-z2m-01.stripprefix.prefixes=/z2m
+      # - traefik.http.middlewares.strip-z2m-01.stripprefix.prefixes=/z2m
       # Redirect "*.myhomeassistant.app/z2m" to "*.myhomeassistant.app/z2m/" (note the trailing "/") 
-      - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.regex=^https?://[^/]+/z2m$
-      - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.replacement=$${1}/z2m/
-      - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.permanent=true
+      # - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.regex=^https?://[^/]+/z2m$
+      # - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.replacement=$${1}/z2m/
+      # - traefik.http.middlewares.z2m-01-slash-redirect.redirectregex.permanent=true
       # Attach middlewares:
-      - traefik.http.routers.z2m-01-web.middlewares=z2m-01-slash-redirect,strip-z2m-01
+      # - traefik.http.routers.z2m-01-web.middlewares=z2m-01-slash-redirect,strip-z2m-01
       # Internal HTTP port for dashboard:
       - traefik.http.services.z2m-01-web-svc.loadbalancer.server.port=8080   
 
