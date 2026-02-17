@@ -166,6 +166,7 @@ services:
       iptables -I FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT;
       iptables -I FORWARD -i wg0 -o wg0 -j DROP;
       iptables -I FORWARD -i wg0 -d 192.0.2.16/29 -j ACCEPT;
+      iptables -I FORWARD -i eth0 -o wg0 -d 100.64.0.0/16 -j ACCEPT;
       iptables -I FORWARD -i wg0 -j DROP;
       wait  # keeps the container running
       "
