@@ -141,8 +141,22 @@ services:
     image: ghcr.io/wg-easy/wg-easy:15.2.2
     container_name: wg-easy
     env_file:
-      - /opt/docker/vps-stack/env/wg-easy.env
+    #  - /opt/docker/vps-stack/env/wg-easy.env
     #  - /opt/docker/vps-stack/secrets/wg-easy.secret
+    environment:
+      - WG_HOST=vpn-eu-01.myhomeassistant.app
+      - WG_PORT=51820
+      - WG_DEFAULT_ADDRESS=100.64.x.x
+      - WG_DEFAULT_DNS=8.8.8.8, 1.1.1.1
+      - WG_MTU=1420
+      - WG_ALLOWED_IPS=192.0.2.16/29
+      - DISABLE_IPV6=true
+      - INSECURE=true
+      - PORT=51821
+      # Full override here - copy-paste exactly (no \ needed in yml)
+      - WG_POST_UP=iptables -t nat -A POSTROUTING -s 100.64.0.0/16 -o eth0 -j MASQUERADE; iptables -A INPUT -p udp --dport 51820 -j ACCEPT; iptables -I FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT; iptables -I FORWARD -i wg0 -o wg0 -j DROP; iptables -I FORWARD -i wg0 -d 192.0.2.16/29 -j ACCEPT; iptables -I FORWARD -i wg0 -j DROP
+      - WG_POST_DOWN=iptables -t nat -D POSTROUTING -s 100.64.0.0/16 -o eth0 -j MASQUERADE; iptables -D INPUT -p udp --dport 51820 -j ACCEPT; iptables -D FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT; iptables -D FORWARD -i wg0 -o wg0 -j DROP; iptables -D FORWARD -i wg0 -d 192.0.2.16/29 -j ACCEPT; iptables -D FORWARD -i wg0 -j DROP
+
     secrets:
       - wg-easy_auth
     volumes:
