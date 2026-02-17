@@ -12,23 +12,16 @@ services:
       - traefik.tcp.routers.z2m-01-serial.service=z2m-01-serial-svc
       - traefik.tcp.services.z2m-01-serial-svc.loadbalancer.server.port=6638  # internal TCP port where z2m-01 container listens to serial traffic
       
-      # HTTP dashboard routing - INTERNAL router (avoids prompting for authentication when requests come from within Home Assistant)
-      - traefik.http.routers.z2m-01-web-internal.rule=Host(`${Z2M01_URL}`) && ClientIP(`192.168.4.0/24`)  # traefik-ha-net
-      - traefik.http.routers.z2m-01-web-internal.entrypoints=web
-      - traefik.http.routers.z2m-01-web-internal.priority=20          # Higher number = higher priority
-      - traefik.http.routers.z2m-01-web-internal.service=z2m-01-web-svc
+      # HTTP dashboard routing + basic auth
+      - traefik.http.routers.z2m-01-web.rule=Host(`${Z2M01_URL}`) # && PathPrefix(`/internal`)
+      - traefik.http.routers.z2m-01-web.entrypoints=web
+      - traefik.http.routers.z2m-01-web.service=z2m-01-web-svc
+      - traefik.http.routers.z2m-01-web.middlewares=z2m-01-auth
 
-      # HTTP dashboard routing - EXTERNAL router (prompts for authentication when requests come from anywhere else (external URL)
-      - traefik.http.routers.z2m-01-web-external.rule=Host(`${Z2M01_URL}`)
-      - traefik.http.routers.z2m-01-web-external.entrypoints=web
-      - traefik.http.routers.z2m-01-web-external.priority=10          # Lower number = lower priority
-      - traefik.http.routers.z2m-01-web-external.service=z2m-01-web-svc
-      - traefik.http.routers.z2m-01-web-external.middlewares=z2m-01-auth
-
-      # Service port (shared by both routers)
+      # Service port
       - traefik.http.services.z2m-01-web-svc.loadbalancer.server.port=8080
 
-      # Basic Auth middleware (still defined once)
+      # Basic Auth middleware
       - traefik.http.middlewares.z2m-01-auth.basicauth.usersfile=/run/secrets/z2m-01-auth
 
       # Traefik reaches z2m-01 from this network only:

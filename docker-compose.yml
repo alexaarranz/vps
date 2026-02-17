@@ -48,8 +48,16 @@ services:
       - --providers.file.watch=true   # optional but recommended for hot reload
       - --serversTransport.insecureSkipVerify=true
 
-      # Entrypoint for traefik's dashboard
+      # HTTP entrypoint
       - --entrypoints.web.address=:80
+
+      # HTTP to HTTPS redirect
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+
+      # HTTPS entrypoint (required for Cloudflare Tunnel)
+      #- --entrypoints.websecure.address=:443
+      #- --entrypoints.websecure.http.tls=true  # Traefik terminates TLS (LetsEncrypt or self-signed)
 
       # Entrypoints for TCP connections from Zigbee2MQTT containers
       - --entrypoints.z2m-01.address=:6001 # z2m-01 sends to tcp://traefik:6001, traefik forwards to user0001-01 TCP 6638 (see/traefik/dynamic/tcp.yml)
