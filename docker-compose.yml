@@ -52,8 +52,8 @@ services:
       - --entrypoints.web.address=:80
 
       # HTTP to HTTPS redirect
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      #- --entrypoints.web.http.redirections.entrypoint.to=websecure
+      #- --entrypoints.web.http.redirections.entrypoint.scheme=https
 
       # HTTPS entrypoint (required for Cloudflare Tunnel)
       #- --entrypoints.websecure.address=:443
