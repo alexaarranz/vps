@@ -157,6 +157,19 @@ services:
       - WG_POST_UP=iptables -t nat -A POSTROUTING -s 100.64.0.0/16 -o eth0 -j MASQUERADE; iptables -A INPUT -p udp --dport 51820 -j ACCEPT; iptables -I FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT; iptables -I FORWARD -i wg0 -o wg0 -j DROP; iptables -I FORWARD -i wg0 -d 192.0.2.16/29 -j ACCEPT; iptables -I FORWARD -i wg0 -j DROP
       - WG_POST_DOWN=iptables -t nat -D POSTROUTING -s 100.64.0.0/16 -o eth0 -j MASQUERADE; iptables -D INPUT -p udp --dport 51820 -j ACCEPT; iptables -D FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT; iptables -D FORWARD -i wg0 -o wg0 -j DROP; iptables -D FORWARD -i wg0 -d 192.0.2.16/29 -j ACCEPT; iptables -D FORWARD -i wg0 -j DROP
 
+    entrypoint: >
+      sh -c "
+      /entrypoint.sh &
+      sleep 15;  # wait for wg0 to come up
+      iptables -D FORWARD -i wg0 -j ACCEPT || true;
+      iptables -D FORWARD -o wg0 -j ACCEPT || true;
+      iptables -I FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT;
+      iptables -I FORWARD -i wg0 -o wg0 -j DROP;
+      iptables -I FORWARD -i wg0 -d 192.0.2.16/29 -j ACCEPT;
+      iptables -I FORWARD -i wg0 -j DROP;
+      wait  # keeps the container running
+      "
+
     secrets:
       - wg-easy_auth
     volumes:
